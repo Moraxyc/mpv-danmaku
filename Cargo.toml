@@ -1,6 +1,6 @@
 [package]
 name = "mpv-danmaku"
-version = "1.8.0"
+version = "1.9.0"
 authors = ["rkscv", "kosette"]
 edition = "2024"
 rust-version = "1.85"
