@@ -32,7 +32,11 @@ fn build_auth_headers(path: &str) -> Result<[(String, String); 3]> {
     }
 
     let timestamp = get_timestamp();
-    let signature = calculate_signature(app_id, timestamp, path, app_secret);
+
+    let signature_path = path.split('?').next().unwrap_or(path);
+    let signature_path = signature_path.to_lowercase();
+
+    let signature = calculate_signature(app_id, timestamp, &signature_path, app_secret);
 
     Ok([
         ("X-AppId".to_string(), app_id.to_string()),
