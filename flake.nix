@@ -44,7 +44,7 @@
 
               nativeBuildInputs = with pkgs; [ pkg-config ];
 
-              OPENSSL_NO_VENDOR = true;
+              env.OPENSSL_NO_VENDOR = true;
             };
 
             cargoArtifacts = craneLib.buildDepsOnly commonArgs;
@@ -56,6 +56,14 @@
                 // {
                   inherit cargoArtifacts;
                   doCheck = true;
+
+                  postInstall = ''
+                    mkdir -p $out/share/mpv/scripts/
+                    ln -sr $out/lib/libmpv_danmaku.so $out/share/mpv/scripts/danmaku.so
+                  '';
+
+                  stripDebugList = [ "share/mpv/scripts" ];
+                  passthru.scriptName = "danmaku.so";
                 }
               );
               default = self'.packages.mpv-danmaku;

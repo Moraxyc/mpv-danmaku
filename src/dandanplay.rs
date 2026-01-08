@@ -1,8 +1,9 @@
-use crate::utils::{AnimeOffset, CLIENT, Linkage};
+use crate::utils::{AnimeOffset, Linkage};
 use crate::{
     emby::{EpInfo, get_episode_info, get_series_info},
     mpv::osd_message,
     options::{self, Filter},
+    service::DandanplayService,
 };
 use anyhow::{Ok, Result, anyhow};
 use serde::{Deserialize, Serialize};
@@ -71,15 +72,9 @@ struct CommentResponse {
 
 impl CommentResponse {
     async fn get(episode_id: usize) -> Result<Self> {
-        Ok(CLIENT
-            .get(format!(
-                "https://api.dandanplay.net/api/v2/comment/{}?withRelated=true",
-                episode_id
-            ))
-            .send()
-            .await?
-            .json::<CommentResponse>()
-            .await?)
+        let path = format!("/api/v2/comment/{}?withRelated=true", episode_id);
+        let request = DandanplayService::get(&path)?;
+        Ok(request.send().await?.json::<CommentResponse>().await?)
     }
 
     async fn save(&self, episode_id: usize) -> Result<()> {
@@ -173,10 +168,7 @@ pub async fn get_danmaku(path: &str, filter: Arc<Filter>) -> Result<Vec<Danmaku>
 
         let file_name = ep_info.get_name();
         if ep_info.status {
-            let mut linkage = match Linkage::load_from_bincode().await {
-                Ok(s) => s,
-                Err(_) => Linkage::new(),
-            };
+            let mut linkage = (Linkage::load_from_bincode().await).unwrap_or_default();
 
             let mut episode_id = 0usize;
 
@@ -317,8 +309,9 @@ async fn get_episode_id_by_hash(hash: &str, file_name: &str) -> Result<usize> {
     "matchMode":"hashAndFileName"
     });
 
-    let res = CLIENT
-        .post("https://api.dandanplay.net/api/v2/match")
+    let request = DandanplayService::post("/api/v2/match")?;
+
+    let res = request
         .header("Content-Type", "application/json")
         .json(&json)
         .send()
@@ -369,13 +362,14 @@ async fn get_episode_id_by_info(ep_info: &EpInfo, linkage: &mut Linkage) -> Resu
 
     let encoded_name: String =
         form_urlencoded::byte_serialize(ep_info.get_series_name().as_bytes()).collect();
-    let url = format!(
-        "https://api.dandanplay.net/api/v2/search/anime?keyword={}&type={}",
+    let path = format!(
+        "/api/v2/search/anime?keyword={}&type={}",
         encoded_name, ep_type
     );
 
-    let res = CLIENT
-        .get(url)
+    let request = DandanplayService::get(&path)?;
+
+    let res = request
         .header("Content-Type", "application/json")
         .send()
         .await?;
@@ -677,8 +671,11 @@ struct BEpisode {
 
 pub async fn _get_episode_num_dan(epid: usize) -> Result<u64> {
     let anime_id = epid / 10000;
-    let bangumi_url = format!("https://api.dandanplay.net/api/v2/bangumi/{}", anime_id);
-    let res = CLIENT.get(bangumi_url).send().await?;
+    let path = format!("/api/v2/bangumi/{}", anime_id);
+
+    let request = DandanplayService::get(&path)?;
+
+    let res = request.send().await?;
 
     if !res.status().is_success() {
         error!(

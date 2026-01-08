@@ -26,6 +26,8 @@ pub struct Options {
     pub proxy: &'static str,
     pub user_agent: &'static str,
     pub log: &'static str,
+    pub app_id: &'static str,
+    pub app_secret: &'static str,
 }
 
 impl Default for Options {
@@ -39,6 +41,8 @@ impl Default for Options {
             proxy: "",
             user_agent: "libmpv",
             log: "false",
+            app_id: "",
+            app_secret: "",
         }
     }
 }
@@ -108,6 +112,12 @@ pub fn read_options() -> Result<Option<(Options, Arc<Filter>)>> {
                 }
                 "log" if !v.is_empty() => {
                     opts.log = Box::leak(v.to_string().into_boxed_str());
+                }
+                "app_id" if !v.is_empty() => {
+                    opts.app_id = Box::leak(v.to_string().into_boxed_str());
+                }
+                "app_secret" if !v.is_empty() => {
+                    opts.app_secret = Box::leak(v.to_string().into_boxed_str());
                 }
                 "filter" if !v.is_empty() => filter.keywords.extend(v.split(',').map(Into::into)),
                 "filter_source" if !v.is_empty() => filter.sources.extend(

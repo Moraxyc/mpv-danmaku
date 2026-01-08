@@ -4,6 +4,7 @@ pub mod ffi;
 pub mod log;
 pub mod mpv;
 pub mod options;
+pub mod service;
 pub mod utils;
 
 use crate::{
@@ -15,6 +16,7 @@ use crate::{
     log::{log_code, log_error},
     mpv::{get_property_f64, get_property_string, osd_message, osd_overlay, remove_overlay},
     options::{Filter, Options},
+    service::DandanplayService,
 };
 use anyhow::anyhow;
 use mpv::expand_path;
@@ -92,6 +94,13 @@ async fn main() -> c_int {
     }
 
     let options = *options::OPTIONS;
+
+    // Check authentication configuration at startup
+    if !DandanplayService::is_auth_configured() {
+        let warning = "Danmaku: app_id and app_secret not configured. Please set them in config file to use danmaku features.";
+        tracing::warn!("{}", warning);
+        osd_message(warning);
+    }
 
     let filter = options::read_options()
         .map_err(|e| log_error(&e))
