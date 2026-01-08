@@ -1,0 +1,33 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    ":separateMajorReleases",
+    "schedule:weekly"
+  ],
+  "dependencyDashboard": true,
+  "lockFileMaintenance": {
+    "enabled": true,
+    "automerge": true
+  },
+  "nix": {
+    "enabled": true
+  },
+  "cargo": {
+    "enabled": true,
+    "groupName": "rust dependencies",
+    "lockFileMaintenance": {
+      "enabled": true
+    }
+  },
+  "packageRules": [
+    {
+      "matchDatasources": ["crate"],
+      "groupName": "cargo dependencies"
+    },
+    {
+      "matchManagers": ["nix"],
+      "groupName": "nix dependencies"
+    }
+  ]
+}
