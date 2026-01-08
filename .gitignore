@@ -1,2 +1,7 @@
 .vscode
 /target
+
+# nix
+.direnv/
+result
+result-*
