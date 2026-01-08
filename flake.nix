@@ -43,7 +43,7 @@
               inherit src;
               strictDeps = true;
 
-              buildInputs = with pkgs; [ openssl ] ++ lib.optionals stdenv.isDarwin [ libiconv ];
+              buildInputs = with pkgs; [ openssl ];
 
               nativeBuildInputs = with pkgs; [ pkg-config ];
 
@@ -51,11 +51,11 @@
             };
 
             cargoArtifacts = craneLib.buildDepsOnly commonArgs;
+
+            scriptName = "danmaku${pkgs.stdenv.hostPlatform.extensions.sharedLibrary}";
           in
           {
-            overlayAttrs = {
-              inherit (config.packages) mpv-danmaku;
-            };
+            overlayAttrs = { inherit (config.packages) mpv-danmaku; };
             packages = {
               mpv-danmaku = craneLib.buildPackage (
                 commonArgs
@@ -65,11 +65,14 @@
 
                   postInstall = ''
                     mkdir -p $out/share/mpv/scripts/
-                    ln -sr $out/lib/libmpv_danmaku.so $out/share/mpv/scripts/danmaku.so
+                    ln -sr $out/lib/libmpv_${scriptName} $out/share/mpv/scripts/${scriptName}
                   '';
 
+                  passthru = {
+                    inherit scriptName;
+                  };
+
                   stripDebugList = [ "share/mpv/scripts" ];
-                  passthru.scriptName = "danmaku.so";
                 }
               );
               default = self'.packages.mpv-danmaku;
