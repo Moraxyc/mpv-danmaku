@@ -33,7 +33,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup Rust toolchain
         uses: actions-rust-lang/setup-rust-toolchain@v1
@@ -42,22 +42,22 @@ jobs:
         if: ${{ matrix.os == 'ubuntu-latest' }}
         run: |
           cargo b -r
-          cp target/release/libdanmaku.so danmaku.so
-          mv target/release/libdanmaku.so target/release/danmaku.so
+          cp target/release/libmpv_danmaku.so danmaku.so
+          mv target/release/libmpv_danmaku.so target/release/danmaku.so
           tar -czf danmaku-${{ matrix.arch }}.tar.gz danmaku.so
 
       - name: Build danmaku-${{matrix.arch}}
         if: ${{ matrix.os == 'windows-latest' }}
         run: |
           cargo b -r
-          cp target/release/danmaku.dll danmaku.dll
+          cp target/release/mpv_danmaku.dll danmaku.dll
           7z a danmaku-${{ matrix.arch }}.7z danmaku.dll
 
       - name: Upload
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: danmaku-${{ matrix.arch }}
-          path: target/release/${{ matrix.artifact }}
+          path: ${{ matrix.artifact }}
           retention-days: 3
           if-no-files-found: error
 
