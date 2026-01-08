@@ -23,10 +23,13 @@
     flake-parts.lib.mkFlake { inherit inputs; } (
       { self, ... }:
       {
+        imports = [ inputs.flake-parts.flakeModules.easyOverlay ];
+
         systems = import inputs.systems;
 
         perSystem =
           {
+            config,
             pkgs,
             self',
             ...
@@ -50,6 +53,9 @@
             cargoArtifacts = craneLib.buildDepsOnly commonArgs;
           in
           {
+            overlayAttrs = {
+              inherit (config.packages) mpv-danmaku;
+            };
             packages = {
               mpv-danmaku = craneLib.buildPackage (
                 commonArgs
