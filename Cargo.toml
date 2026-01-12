@@ -12,24 +12,23 @@ crate-type = ["cdylib"]
 [dependencies]
 anyhow = "1.0"
 base64 = "0.22"
-bincode = { version = "2.0", features = ["serde"] }
+bincode = { version = "2.0.1", features = ["serde"] }
 futures = "0.3"
 hex = "0.4"
 md-5 = "0.10"
 rand = "0.9"
-regex = "1.11"
+regex = "1.12"
 sha2 = "0.10"
-reqwest = { version = "0.12", default-features = false, features = [
-  "http2",
-  "native-tls",
-  "native-tls-alpn",
-  "json",
-  "stream",
-  "charset",
+reqwest = { version = "0.13.1", default-features = false, features = [
+    "http2",
+    "native-tls",
+    "json",
+    "stream",
+    "charset",
 ] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
-tokio = { version = "1.44", features = ["rt-multi-thread", "sync"] }
+tokio = { version = "1.49", features = ["rt-multi-thread", "sync"] }
 tracing = "0.1"
 tracing-appender = "0.2"
 tracing-subscriber = { version = "0.3", features = ["chrono", "env-filter"] }
