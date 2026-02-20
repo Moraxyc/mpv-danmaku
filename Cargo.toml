@@ -16,7 +16,7 @@ bincode = { version = "2.0.1", features = ["serde"] }
 futures = "0.3"
 hex = "0.4"
 md-5 = "0.10"
-rand = "0.9"
+rand = "0.10"
 regex = "1.12"
 sha2 = "0.10"
 reqwest = { version = "0.13.1", default-features = false, features = [
