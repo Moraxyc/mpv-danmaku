@@ -52,7 +52,7 @@ jobs:
                   7z a danmaku-${{ matrix.arch }}.7z danmaku.dll
 
             - name: Upload
-              uses: actions/upload-artifact@v6
+              uses: actions/upload-artifact@v7
               with:
                   name: danmaku-${{ matrix.arch }}
                   path: ${{ matrix.artifact }}
