@@ -10,17 +10,17 @@ jobs:
         steps:
             - name: Nothing but nix
               if: ${{ runner.os == 'Linux' && inputs.ONLY_NIX != 'true' }}
-              uses: wimpysworld/nothing-but-nix@main
+              uses: wimpysworld/nothing-but-nix@baf7355748bb5651f08b839669d6bb39051b2874 # main
               with:
                   hatchet-protocol: rampage
                   root-safe-haven: 2048
 
             - name: Install nix
-              uses: cachix/install-nix-action@v31
+              uses: cachix/install-nix-action@448cde739abec1eaf0646249e3d25bb8d9bc7702 # v31
 
-            - uses: DeterminateSystems/magic-nix-cache-action@main
+            - uses: DeterminateSystems/magic-nix-cache-action@f69a2d3e148e90223fe63ab6e3f6331f2e7e33dc # main
 
-            - uses: actions/checkout@v6
+            - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
 
             - name: Run Nix Fast Build
               run: |
